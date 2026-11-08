@@ -1,0 +1,86 @@
+
+== Authentication ==
+  PASS  anonymous GET /api/tickets -> 401
+  PASS  anonymous page / redirects to login
+  PASS  wrong password rejected
+  PASS  unknown e-mail rejected
+  PASS  owner session has Asset_Owner role
+  PASS  session never exposes password hash
+
+== RBAC at the API layer ==
+  PASS  owner cannot create a ticket (403)
+  PASS  owner cannot read audit log (403)
+  PASS  owner cannot list users (403)
+  PASS  analyst cannot list users (403)
+  PASS  analyst cannot run SLA sweep (403)
+  PASS  owner cannot write CVEs (403)
+  PASS  admin can list users and no hashes leak
+
+== Owner data isolation (enforced in MySQL) ==
+  PASS  owner sees a subset of tickets
+  PASS  owner sees only own assets
+  PASS  owner blast radius on foreign asset is refused
+  PASS  owner cannot edit a foreign asset
+  PASS  owner cannot submit a patch for a foreign ticket
+  PASS  owner timeline is forbidden
+
+== Ticket lifecycle (triage -> patch -> review) ==
+  PASS  analyst triages a ticket (201)
+  PASS  duplicate asset+CVE ticket is rejected (409)
+  PASS  invalid commit hash rejected by validation (400/422)
+  PASS  owner submits patch -> IN_PROGRESS
+  PASS  owner cannot review (403)
+  PASS  analyst rejects patch
+  PASS  analyst verifies patch -> RESOLVED
+  PASS  timeline recorded the whole lifecycle
+  PASS  re-reviewing a resolved ticket is refused
+
+== Assets CRUD ==
+  PASS  owner registers an asset
+  PASS  invalid IP rejected by the database CHECK
+  PASS  duplicate hostname rejected
+  PASS  owner updates own asset
+  PASS  owner retires own asset
+  PASS  asset with tickets cannot be retired
+
+== Blast radius (recursive CTE) ==
+  PASS  blast radius returns rows
+  PASS  no duplicate assets despite the dependency cycle
+
+== CVE CRUD with vector sync (MySQL + pgvector) ==
+  PASS  analyst creates CVE -> vector SYNCED
+  PASS  CVE read returns MySQL record + pgvector document
+  PASS  severity derived from CVSS by a trigger (7.8 -> High)
+  PASS  embedding model stored with the vector
+  PASS  semantic search finds the new CVE
+  PASS  hybrid search works
+  PASS  update re-embeds (SYNCED)
+  PASS  update changed severity to Critical and text in pgvector
+  PASS  invalid CVE id rejected (400)
+  PASS  CVSS out of range rejected
+  PASS  owner can search but sees no ticket counts
+  PASS  delete removes MySQL row and vector
+  PASS  deleted CVE is gone (404)
+  PASS  CVE with tickets is retired, not deleted
+  PASS  reconcile job runs
+
+== Dashboard, audit, admin ==
+  PASS  admin dashboard is organisation-wide
+  PASS  owner dashboard is scoped to 'mine'
+  PASS  audit log readable by analyst
+  PASS  admin runs SLA sweep
+  PASS  admin creates a user (password hashed by the app)
+  PASS  new user can log in
+  PASS  weak password rejected
+  PASS  admin deactivates the user
+  PASS  deactivated user cannot log in
+  PASS  last-admin guard trigger blocks deactivation
+
+== Lockout ==
+  PASS  account locks after 5 failures (even with the right password)
+
+== Security headers ==
+  PASS  X-Frame-Options / CSP style headers present
+  PASS  no X-Powered-By header
+
+64 passed, 0 failed

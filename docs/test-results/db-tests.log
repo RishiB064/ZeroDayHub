@@ -1,0 +1,65 @@
+=== 1. Data validation & integrity (DB level) ===============================
+PASS  T-INT-01   plain-text password is rejected by CHECK on password_hash
+PASS  T-INT-02   invalid e-mail rejected
+PASS  T-INT-03   CVSS score above 10 rejected
+PASS  T-INT-04   malformed CVE id rejected
+PASS  T-INT-05   invalid IP address rejected
+PASS  T-INT-06   unknown CWE blocked by foreign key
+PASS  T-INT-07   duplicate (asset, CVE) ticket blocked by UNIQUE
+PASS  T-INT-08   asset cannot depend on itself (trigger)
+PASS  T-INT-09   last active admin cannot be deactivated (trigger)
+PASS  T-INT-10   ticket cannot be assigned to an asset owner (trigger)
+PASS  T-INT-11   RESOLVED without a commit hash rejected
+PASS  T-INT-12   resolved tickets are read-only (trigger)
+PASS  T-INT-13   severity derived from CVSS by trigger
+PASS  T-INT-14   overdue ticket auto-escalates on any update (trigger)
+=== 2. Append-only audit log ================================================
+PASS  T-AUD-01   UPDATE on audit_logs blocked by trigger (even for root)
+PASS  T-AUD-02   DELETE on audit_logs blocked by trigger (even for root)
+PASS  T-AUD-03   ticket with audit history cannot be deleted (FK RESTRICT)
+PASS  T-AUD-04   SLA breach escalation was logged by the trigger
+=== 3. Transactions (sp_review_patch) =======================================
+PASS  T-TXN-01   review without a submitted patch raises an error
+PASS  T-TXN-02   failed review left patch_verifications unchanged (3 rows)
+PASS  T-TXN-03   review by a non-analyst rejected
+PASS  T-TXN-04   bad commit-hash format rejected on submit
+=== 4. RBAC in MySQL (each case connects as a different DB account) =========
+PASS  T-RBAC-01  analyst reads the ticket board
+PASS  T-RBAC-02  analyst cannot read users.password_hash
+PASS  T-RBAC-03  analyst cannot read the users table at all
+PASS  T-RBAC-04  analyst reads the hash-free user directory
+PASS  T-RBAC-05  analyst cannot change ticket status directly
+PASS  T-RBAC-06  analyst may reassign tickets (column-level grant)
+PASS  T-RBAC-07  analyst cannot modify assets
+PASS  T-RBAC-08  analyst cannot delete audit rows (privilege layer)
+PASS  T-RBAC-09  analyst can insert CVEs
+PASS  T-RBAC-10  owner has no direct access to assets
+PASS  T-RBAC-11  owner has no direct access to tickets
+PASS  T-RBAC-12  owner has no access to audit logs
+PASS  T-RBAC-13  owner reads own tickets through a procedure
+PASS  T-RBAC-14  owner reads the CVE catalogue
+PASS  T-RBAC-15  owner cannot write CVEs
+PASS  T-RBAC-16  owner cannot triage tickets (no EXECUTE)
+PASS  T-RBAC-17  owner cannot patch another owner's ticket (ownership check inside DB)
+PASS  T-RBAC-18  owner cannot retire another owner's asset
+PASS  T-RBAC-19  owner cannot register assets for someone else
+PASS  T-RBAC-19b owner cannot call the ungated blast-radius procedure
+PASS  T-RBAC-19c owner cannot analyse another owner's asset
+PASS  T-RBAC-19d owner can analyse the blast radius of own asset
+PASS  T-RBAC-20  admin reads users
+PASS  T-RBAC-21  admin cannot delete audit rows
+PASS  T-RBAC-22  admin cannot insert audit rows directly
+PASS  T-RBAC-23  admin cannot drop tables
+PASS  T-RBAC-24  auth account reads login columns
+PASS  T-RBAC-25  auth account cannot read other user columns
+PASS  T-RBAC-26  auth account cannot read assets
+=== 5. RBAC in PostgreSQL ====================================================
+PASS  T-PG-01    reader can SELECT vectors
+PASS  T-PG-02    reader cannot INSERT
+PASS  T-PG-03    reader cannot DELETE
+PASS  T-PG-04    writer can DELETE (no rows matched)
+PASS  T-PG-05    writer cannot drop the table
+PASS  T-PG-06    CHECK rejects a malformed CVE id
+PASS  T-PG-07    wrong embedding dimension rejected
+
+RESULT: 58 passed, 0 failed
