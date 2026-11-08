@@ -1,0 +1,142 @@
+[
+  {
+    "cve_id": "CVE-2026-1001",
+    "vendor": "Meridian Systems", "product": "Meridian SSH daemon", "tags": ["memory-corruption", "remote", "pre-auth"],
+    "advisory_text": "The Meridian SSH daemon frees the same session buffer twice when a client aborts key exchange at a specific protocol stage. The double free corrupts the heap allocator metadata before authentication completes, so any network client that can reach the service can trigger it. Successful exploitation can lead to remote code execution as the daemon user.",
+    "exploit_summary": "An unauthenticated attacker repeatedly interrupts the key exchange to groom the heap and gain control of execution. No credentials are needed.",
+    "remediation_playbook": "1. Upgrade to Meridian SSH 9.4.2 or later. 2. Until patched, restrict port 22 to bastion hosts with firewall rules. 3. Enable the daemon's privilege separation option. 4. Restart the service and confirm the new version banner. 5. Review auth logs for repeated aborted key exchanges."
+  },
+  {
+    "cve_id": "CVE-2026-1002",
+    "vendor": "Hollow Labs", "product": "Hollow ORM", "tags": ["injection", "database", "web"],
+    "advisory_text": "Hollow ORM builds SQL statements for schema metadata calls by concatenating user supplied column aliases without escaping. An attacker who controls an alias value can append arbitrary SQL, read or modify records the application account can reach, and in some configurations escalate to the database host.",
+    "exploit_summary": "A crafted alias parameter in an API request breaks out of the generated query and appends attacker controlled SQL.",
+    "remediation_playbook": "1. Upgrade Hollow ORM to 5.8.1 which parameterizes aliases. 2. Add an allow-list validation for alias and column names at the API boundary. 3. Run the application database account with least privilege (no DDL, no file access). 4. Rotate database credentials if exposure is suspected. 5. Add a regression test that sends quote characters in alias fields."
+  },
+  {
+    "cve_id": "CVE-2026-1003",
+    "vendor": "Quill Networks", "product": "Quill HTTP/3 server", "tags": ["memory-disclosure", "remote", "http3"],
+    "advisory_text": "The QUIC frame parser in the Quill HTTP/3 server trusts a length field in a crafted frame header and reads past the end of the receive buffer. The out-of-bounds read returns adjacent heap memory to the remote client, which may contain session tokens, private keys or other requests.",
+    "exploit_summary": "A remote client sends malformed QUIC frames with an oversized length and receives leaked memory in the response.",
+    "remediation_playbook": "1. Update Quill to 2.7.0 which validates frame lengths. 2. If an update is not possible disable HTTP/3 and fall back to HTTP/2. 3. Rotate TLS private keys and session ticket keys on any exposed server. 4. Invalidate active sessions. 5. Monitor for QUIC connections with unusual frame sizes."
+  },
+  {
+    "cve_id": "CVE-2026-1004",
+    "vendor": "Ketch Project", "product": "Ketch kernel packet filter", "tags": ["privilege-escalation", "local", "kernel"],
+    "advisory_text": "A rule evaluation routine in the Ketch kernel packet filter fails to check the caller's capabilities before applying a table update. A local unprivileged user can load crafted rules, cause kernel memory writes, and obtain root privileges on the host.",
+    "exploit_summary": "A local user with shell access submits specially built rule tables to gain administrative control of the machine.",
+    "remediation_playbook": "1. Install the kernel update that ships Ketch 4.19-r3 and reboot. 2. As a temporary measure restrict unprivileged user namespaces. 3. Audit sudoers and local accounts on affected hosts. 4. Check for unexpected new root-owned binaries or cron jobs. 5. Record the kernel version in the asset inventory."
+  },
+  {
+    "cve_id": "CVE-2026-1005",
+    "vendor": "Relay Software", "product": "Relay TLS socket handler", "tags": ["denial-of-service", "tls", "resource-exhaustion"],
+    "advisory_text": "The Relay TLS socket handler allocates a renegotiation context for every client hello without limiting concurrent handshakes. A remote client can open many half-finished handshakes and exhaust memory and file descriptors, making the service unresponsive.",
+    "exploit_summary": "A single host opens thousands of incomplete TLS handshakes until the server stops accepting connections.",
+    "remediation_playbook": "1. Upgrade Relay to 3.3.9 which caps pending handshakes. 2. Configure connection rate limiting and handshake timeouts at the load balancer. 3. Set per-process file descriptor and memory limits. 4. Add alerting on the number of half-open connections. 5. Restart workers after patching to release leaked contexts."
+  },
+  {
+    "cve_id": "CVE-2026-1006",
+    "vendor": "Lattice Media", "product": "Lattice image codec", "tags": ["memory-corruption", "integer-overflow", "file-parsing"],
+    "advisory_text": "When computing the buffer size for a decoded image, the Lattice codec multiplies width, height and channel count in a 32 bit integer that can wrap around. The undersized allocation is then filled with the full image data, corrupting the heap. Opening a malicious image in any application using the library may allow code execution.",
+    "exploit_summary": "A crafted image file with extreme dimensions triggers the arithmetic overflow and a heap overwrite when it is decoded.",
+    "remediation_playbook": "1. Upgrade the Lattice library to 6.1.4 and rebuild dependent applications. 2. Reject images above a maximum pixel count before decoding. 3. Decode untrusted images in a sandboxed process with no network access. 4. Scan upload directories for oversized image headers. 5. Verify the library version in every container image."
+  },
+  {
+    "cve_id": "CVE-2026-1007",
+    "vendor": "Pylon Tools", "product": "Pylon admin console", "tags": ["xss", "web", "stored"],
+    "advisory_text": "The audit viewer of the Pylon admin console renders the user agent string of logged requests without output encoding. Script content stored in a log entry executes in the browser of any administrator who opens the viewer, allowing session theft or actions performed as that administrator.",
+    "exploit_summary": "An attacker sends a request with a malicious user agent header and waits for an administrator to open the audit page.",
+    "remediation_playbook": "1. Upgrade to Pylon 7.2.0 which encodes log fields. 2. Add a strict Content-Security-Policy that blocks inline scripts. 3. Mark session cookies HttpOnly and SameSite=Strict. 4. Purge log entries that contain markup. 5. Force administrators to sign in again."
+  },
+  {
+    "cve_id": "CVE-2026-1008",
+    "vendor": "Corvid Cloud", "product": "Corvid webhook service", "tags": ["ssrf", "cloud", "metadata"],
+    "advisory_text": "The Corvid webhook service fetches user supplied callback URLs without restricting destinations. An attacker can point a webhook at internal addresses, including the cloud instance metadata endpoint, and read the response, obtaining temporary cloud credentials and reaching internal services.",
+    "exploit_summary": "A tenant registers a webhook whose URL targets a link-local metadata address and reads the returned credentials from the delivery log.",
+    "remediation_playbook": "1. Upgrade to Corvid 3.6.2 which blocks private and link-local ranges. 2. Enforce IMDSv2 or equivalent token-based metadata access on all instances. 3. Resolve hostnames once and pin the address to prevent DNS rebinding. 4. Move webhook delivery to an egress proxy with an allow-list. 5. Rotate any instance credentials that may have been read."
+  },
+  {
+    "cve_id": "CVE-2026-1009",
+    "vendor": "Anvil Storage", "product": "Anvil file gateway", "tags": ["path-traversal", "file-disclosure", "web"],
+    "advisory_text": "The Anvil file gateway joins a user supplied file name to its export directory without removing parent directory sequences. A remote client can request files outside the export root, such as configuration files and private keys, using encoded dot-dot segments.",
+    "exploit_summary": "An attacker requests a path containing encoded parent directory markers and downloads arbitrary readable files.",
+    "remediation_playbook": "1. Upgrade to Anvil 2.12.5 which canonicalizes paths. 2. Run the gateway as a dedicated unprivileged user with read access only to the export directory. 3. Place a reverse proxy rule that rejects encoded traversal sequences. 4. Rotate secrets stored on affected hosts. 5. Review access logs for suspicious file requests."
+  },
+  {
+    "cve_id": "CVE-2026-1010",
+    "vendor": "Vellum Data", "product": "Vellum job runner", "tags": ["deserialization", "rce", "remote"],
+    "advisory_text": "The Vellum job runner deserializes task payloads received from its queue using a native object format that can instantiate arbitrary classes. An attacker who can publish a message to the queue can make the runner execute code of their choosing with the privileges of the worker process.",
+    "exploit_summary": "A malicious serialized object is placed on the job queue and executed when a worker picks it up.",
+    "remediation_playbook": "1. Upgrade to Vellum 4.0.3 which switches to a safe data-only format. 2. Require authentication and TLS for the message queue and restrict who can publish. 3. Sign task payloads and verify the signature before processing. 4. Run workers with minimal privileges in isolated containers. 5. Drain and inspect queued messages after patching."
+  },
+  {
+    "cve_id": "CVE-2026-1011",
+    "vendor": "Halcyon Identity", "product": "Halcyon SSO broker", "tags": ["authentication-bypass", "sso", "tokens"],
+    "advisory_text": "The Halcyon SSO broker accepts session tokens whose signature algorithm header is set to none, skipping signature verification. An attacker can forge a token for any user, including administrators, and sign in to every application that trusts the broker.",
+    "exploit_summary": "A forged token with an unsigned algorithm header is presented to the broker and accepted as valid.",
+    "remediation_playbook": "1. Upgrade to Halcyon 8.1.0 which requires a configured signing algorithm. 2. Rotate the token signing keys and invalidate all active sessions. 3. Configure relying applications to enforce expected algorithms. 4. Review sign-in logs for administrator logins from unusual locations. 5. Enable multi-factor authentication for privileged accounts."
+  },
+  {
+    "cve_id": "CVE-2026-1012",
+    "vendor": "Parchment Docs", "product": "Parchment document parser", "tags": ["xxe", "xml", "file-disclosure"],
+    "advisory_text": "The Parchment document parser resolves external entities in uploaded XML documents by default. An attacker can embed an entity reference that makes the server read local files or contact internal hosts, and the contents may appear in error messages or parsed output.",
+    "exploit_summary": "A crafted XML file declares an external entity that points to a local file and the parser includes its contents in the result.",
+    "remediation_playbook": "1. Upgrade to Parchment 5.5.1 where external entities are disabled. 2. Set the parser feature flags to disallow DOCTYPE declarations. 3. Validate uploaded documents against a strict schema. 4. Restrict outbound network access from the parsing service. 5. Search logs for uploads containing entity declarations."
+  },
+  {
+    "cve_id": "CVE-2026-1013",
+    "vendor": "Lantern Ops", "product": "Lantern diagnostics endpoint", "tags": ["command-injection", "rce", "web"],
+    "advisory_text": "The ping diagnostics endpoint of Lantern passes a host name from the request directly to a shell command. Shell metacharacters in the value are interpreted, so an authenticated or in some setups unauthenticated user can run arbitrary operating system commands on the server.",
+    "exploit_summary": "An attacker appends shell operators to the host parameter and the injected command runs with the service account's rights.",
+    "remediation_playbook": "1. Upgrade to Lantern 3.9.0 which uses direct process execution without a shell. 2. Disable the diagnostics endpoint on production systems. 3. Validate host names against a strict pattern. 4. Run the service under a restricted account and read-only file system. 5. Hunt for unexpected child processes spawned by the service."
+  },
+  {
+    "cve_id": "CVE-2026-1014",
+    "vendor": "Finch Browser", "product": "Finch browser engine", "tags": ["memory-corruption", "use-after-free", "client-side"],
+    "advisory_text": "The Finch browser engine keeps a pointer to a frame object after the frame has been torn down during navigation. Script that triggers a specific sequence of events can reuse the freed memory, leading to code execution inside the renderer process when a user visits a malicious page.",
+    "exploit_summary": "A web page runs scripted navigation timing to reuse freed frame memory and take over the renderer.",
+    "remediation_playbook": "1. Update Finch to version 118.4 through managed deployment. 2. Keep the renderer sandbox enabled and do not disable site isolation. 3. Block known malicious domains at the web proxy. 4. Restrict browsing from privileged administrator workstations. 5. Confirm the version on all endpoints with the inventory tool."
+  },
+  {
+    "cve_id": "CVE-2026-1015",
+    "vendor": "Warden Security", "product": "Warden endpoint agent", "tags": ["hardcoded-credentials", "agent", "lateral-movement"],
+    "advisory_text": "The Warden endpoint agent ships with a built-in service account password that is identical on every installation. Anyone who extracts the password from the installer can authenticate to the agent management port of any host and run administrative actions.",
+    "exploit_summary": "An attacker recovers the shared default password from a copy of the agent and logs in to the management interface of other machines.",
+    "remediation_playbook": "1. Upgrade to Warden 11.2 which generates a unique credential per host at install time. 2. Block the agent management port from user networks. 3. Rotate agent credentials across the fleet using the management console. 4. Audit hosts for logins using the legacy account. 5. Store new credentials in the enterprise secret vault."
+  },
+  {
+    "cve_id": "CVE-2026-1016",
+    "vendor": "Ledgerline", "product": "Ledgerline settlement service", "tags": ["race-condition", "business-logic", "payments"],
+    "advisory_text": "The settlement service checks an account balance and records the payout in two separate steps without a lock. Two concurrent payout requests can both pass the balance check, which allows a single balance to be paid out twice and creates financial discrepancies.",
+    "exploit_summary": "An attacker submits two payout requests at the same moment so both read the same balance before either one is recorded.",
+    "remediation_playbook": "1. Upgrade to Ledgerline 6.4.7 which performs the check and debit atomically. 2. Wrap balance checks and debits in a single database transaction with row level locking. 3. Add idempotency keys to payout requests. 4. Run a reconciliation job to detect duplicate payouts. 5. Alert finance operations on negative balances."
+  },
+  {
+    "cve_id": "CVE-2026-1017",
+    "vendor": "Tundra JS", "product": "Tundra configuration library", "tags": ["prototype-pollution", "javascript", "supply-chain"],
+    "advisory_text": "The merge helper in the Tundra configuration library copies properties recursively without blocking special keys such as the object prototype. Attacker supplied JSON can modify the prototype of all objects in the process, changing application behavior and sometimes leading to authentication bypass or code execution.",
+    "exploit_summary": "A JSON body containing a prototype key is merged into configuration and alters default properties of every object.",
+    "remediation_playbook": "1. Upgrade Tundra to 2.9.3 which ignores prototype keys. 2. Use objects created without a prototype for configuration data. 3. Validate incoming JSON against a schema that rejects unexpected keys. 4. Freeze the object prototype at application start. 5. Run dependency audits in continuous integration."
+  },
+  {
+    "cve_id": "CVE-2026-1018",
+    "vendor": "Pigeon Mail", "product": "Pigeon mail client", "tags": ["tls", "certificate-validation", "man-in-the-middle"],
+    "advisory_text": "The Pigeon mail client verifies that a server certificate is signed by a trusted authority but does not compare the certificate name to the host it connected to. An attacker on the network path can present any valid certificate and read or modify mail and credentials.",
+    "exploit_summary": "A network attacker intercepts the mail connection and presents a valid certificate issued for a different domain.",
+    "remediation_playbook": "1. Upgrade Pigeon to 4.1.2 which enforces hostname verification. 2. Force TLS with certificate pinning for the corporate mail servers. 3. Change mailbox passwords for users on untrusted networks. 4. Use the corporate VPN on public networks. 5. Review mail server logs for unusual client locations."
+  },
+  {
+    "cve_id": "CVE-2026-1019",
+    "vendor": "Orchard Apps", "product": "Orchard customer portal", "tags": ["csrf", "web", "account-takeover"],
+    "advisory_text": "The profile update form of the Orchard customer portal does not include an anti-forgery token and relies only on the session cookie. A malicious web page can submit a hidden form on behalf of a signed-in customer and change their e-mail address, which enables account takeover through password reset.",
+    "exploit_summary": "A victim visits an attacker controlled page that silently posts a profile change to the portal using the victim's session.",
+    "remediation_playbook": "1. Upgrade to Orchard 2.3.0 which adds per-request anti-forgery tokens. 2. Set the SameSite attribute to Lax or Strict on session cookies. 3. Require re-authentication before changing an e-mail address. 4. Send a confirmation message to the old address on every change. 5. Review recent e-mail changes for suspicious patterns."
+  },
+  {
+    "cve_id": "CVE-2026-1020",
+    "vendor": "Cairn Web", "product": "Cairn link service", "tags": ["open-redirect", "phishing", "web"],
+    "advisory_text": "The login page of the Cairn link service redirects users to the address in the return parameter without checking that it belongs to the same site. Attackers can craft links that appear to start on a trusted domain and send users to a look-alike site after sign-in, supporting phishing campaigns.",
+    "exploit_summary": "A phishing e-mail contains a legitimate looking login link whose return parameter points to the attacker's page.",
+    "remediation_playbook": "1. Upgrade to Cairn 1.8.4 which validates return targets. 2. Allow only relative paths or an explicit allow-list of destination hosts. 3. Show an interstitial warning for external redirects. 4. Add the issue to security awareness training. 5. Monitor for login links with external return values."
+  }
+]
