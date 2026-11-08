@@ -1,0 +1,37 @@
+{
+  "name": "zerodayhub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ZeroDayHub - Vulnerability governance and semantic threat intelligence (MySQL + PostgreSQL/pgvector + Next.js)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:init": "node scripts/init-db.mjs",
+    "db:seed-vectors": "tsx scripts/seed-vectors.ts",
+    "test:db": "bash db/tests/run-db-tests.sh",
+    "test:api": "node tests/api-smoke.mjs",
+    "docs:dictionary": "python3 scripts/gen-data-dictionary.py"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.5.0",
+    "bcryptjs": "^2.4.3",
+    "mysql2": "^3.11.5",
+    "next": "^15.5.0",
+    "next-auth": "^4.24.11",
+    "pg": "^8.13.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
