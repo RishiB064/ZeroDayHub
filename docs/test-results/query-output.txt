@@ -1,0 +1,211 @@
++---------------+------------+----------+
+| cve_id        | cvss_score | severity |
++---------------+------------+----------+
+| CVE-2026-2001 |       10.0 | Critical |
++---------------+------------+----------+
++-----------+----------+---------------+--------+---------------------+
+| ticket_id | asset_id | cve_id        | status | sla_deadline        |
++-----------+----------+---------------+--------+---------------------+
+|        24 |        1 | CVE-2026-2001 | OPEN   | 2026-10-28 11:03:39 |
+|        25 |        2 | CVE-2026-2001 | OPEN   | 2026-10-28 11:03:39 |
+|        26 |        3 | CVE-2026-2001 | OPEN   | 2026-10-28 11:03:39 |
+|        27 |        6 | CVE-2026-2001 | OPEN   | 2026-10-28 11:03:39 |
++-----------+----------+---------------+--------+---------------------+
++---------------+------------+----------+
+| cve_id        | cvss_score | severity |
++---------------+------------+----------+
+| CVE-2026-2001 |        6.4 | Medium   |
++---------------+------------+----------+
++-----------+---------------------+-------------+
+| ticket_id | assigned_analyst_id | status      |
++-----------+---------------------+-------------+
+|         2 |                   4 | IN_PROGRESS |
+|         4 |                   4 | OPEN        |
+|         5 |                   4 | OPEN        |
+|         6 |                   4 | OPEN        |
+|         7 |                   4 | IN_PROGRESS |
+|         8 |                   4 | OPEN        |
+|        10 |                   4 | ESCALATED   |
+|        11 |                   4 | OPEN        |
+|        12 |                   4 | IN_PROGRESS |
+|        13 |                   4 | OPEN        |
+|        16 |                   4 | IN_PROGRESS |
++-----------+---------------------+-------------+
++------------------------+
+| audit_rows_for_new_cve |
++------------------------+
+|                      4 |
++------------------------+
++----------------+
+| should_be_zero |
++----------------+
+|              0 |
++----------------+
++--------------------+-------------+----------------+---------------+------------+----------+---------------+---------------------+------------+
+| hostname           | environment | asset_owner    | cve_id        | cvss_score | severity | ticket_status | sla_deadline        | risk_index |
++--------------------+-------------+----------------+---------------+------------+----------+---------------+---------------------+------------+
+| prod-pay-gw-01     | Production  | Sneha Patel    | CVE-2026-1001 |        9.8 | Critical | ESCALATED     | 2026-10-23 11:03:34 |      19.60 |
+| prod-auth-api-02   | Production  | Ananya Das     | CVE-2026-1001 |        9.8 | Critical | OPEN          | 2026-10-27 11:03:34 |      19.60 |
+| prod-pay-db-01     | Production  | Sneha Patel    | CVE-2026-1011 |        9.4 | Critical | OPEN          | 2026-10-26 11:03:34 |      18.80 |
+| prod-pay-gw-01     | Production  | Sneha Patel    | CVE-2026-1002 |        8.8 | High     | IN_PROGRESS   | 2026-10-30 11:03:34 |      17.60 |
+| prod-pay-db-01     | Production  | Sneha Patel    | CVE-2026-1002 |        8.8 | High     | OPEN          | 2026-10-31 11:03:34 |      17.60 |
+| prod-data-lake-01  | Production  | Kabir Malhotra | CVE-2026-1010 |        9.8 | Critical | OPEN          | 2026-10-27 11:03:34 |      14.70 |
+| corp-vpn-gw-01     | Production  | Dev Kulkarni   | CVE-2026-1006 |        9.1 | Critical | IN_PROGRESS   | 2026-10-29 11:03:34 |      13.65 |
+| prod-ledger-svc-01 | Production  | Sneha Patel    | CVE-2026-1016 |        6.8 | Medium   | OPEN          | 2026-11-02 11:03:34 |      13.60 |
+| stg-checkout-db    | Staging     | Sneha Patel    | CVE-2026-1013 |        9.0 | Critical | ESCALATED     | 2026-10-24 11:03:34 |      13.50 |
+| prod-web-edge-01   | Production  | Rohan Sharma   | CVE-2026-1003 |        7.5 | High     | OPEN          | 2026-11-06 11:03:34 |      11.25 |
++--------------------+-------------+----------------+---------------+------------+----------+---------------+---------------------+------------+
++----------------+----------------------+--------------+-----------------+
+| full_name      | department           | assets_owned | critical_assets |
++----------------+----------------------+--------------+-----------------+
+| Sneha Patel    | Core Payments        |            4 |               3 |
+| Rohan Sharma   | Cloud Infrastructure |            2 |               0 |
+| Kabir Malhotra | Data Platform        |            2 |               0 |
+| Ananya Das     | Customer Identity    |            2 |               1 |
+| Dev Kulkarni   | Corporate IT         |            2 |               0 |
++----------------+----------------------+--------------+-----------------+
++---------------+------------------------------------------------------------------------+------------+
+| cve_id        | title                                                                  | cvss_score |
++---------------+------------------------------------------------------------------------+------------+
+| CVE-2026-1001 | Meridian SSH daemon pre-auth double free allows remote code execution  |        9.8 |
+| CVE-2026-1010 | Vellum job runner unsafe deserialization enables remote code execution |        9.8 |
+| CVE-2026-1011 | Halcyon SSO broker authentication bypass via forged session token      |        9.4 |
+| CVE-2026-1006 | Lattice image codec integer overflow leads to heap corruption          |        9.1 |
+| CVE-2026-1002 | Hollow ORM metadata call permits SQL injection through column aliases  |        8.8 |
+| CVE-2026-1004 | Ketch kernel packet filter local privilege escalation                  |        7.8 |
+| CVE-2026-1003 | Quill HTTP/3 server out-of-bounds read discloses process memory        |        7.5 |
+| CVE-2026-1016 | Ledgerline settlement service race condition allows double payout      |        6.8 |
+| CVE-2026-1007 | Pylon admin console stored cross-site scripting in the audit viewer    |        6.1 |
++---------------+------------------------------------------------------------------------+------------+
++-----------+-------------------+---------------+------------+---------------+
+| ticket_id | hostname          | cve_id        | cvss_score | catalogue_avg |
++-----------+-------------------+---------------+------------+---------------+
+|         1 | prod-pay-gw-01    | CVE-2026-1001 |        9.8 |          7.54 |
+|         3 | prod-auth-api-02  | CVE-2026-1001 |        9.8 |          7.54 |
+|         8 | prod-data-lake-01 | CVE-2026-1010 |        9.8 |          7.54 |
+|         5 | prod-pay-db-01    | CVE-2026-1011 |        9.4 |          7.54 |
+|        15 | stg-auth-api-01   | CVE-2026-1011 |        9.4 |          7.54 |
+|        12 | corp-vpn-gw-01    | CVE-2026-1006 |        9.1 |          7.54 |
+|        10 | stg-checkout-db   | CVE-2026-1013 |        9.0 |          7.54 |
+|         2 | prod-pay-gw-01    | CVE-2026-1002 |        8.8 |          7.54 |
+|         4 | prod-pay-db-01    | CVE-2026-1002 |        8.8 |          7.54 |
+|        14 | prod-auth-api-02  | CVE-2026-1004 |        7.8 |          7.54 |
++-----------+-------------------+---------------+------------+---------------+
++---------+-------------+
+| user_id | full_name   |
++---------+-------------+
+|       2 | Arjun Mehta |
+|       3 | Priya Nair  |
+|       4 | Meera Iyer  |
++---------+-------------+
++-------------------+-------------+----------------+
+| hostname          | environment | asset_avg_cvss |
++-------------------+-------------+----------------+
+| prod-pay-gw-01    | Production  |           9.30 |
+| prod-auth-api-02  | Production  |           9.80 |
+| prod-pay-db-01    | Production  |           9.10 |
+| prod-data-lake-01 | Production  |           9.80 |
+| stg-checkout-db   | Staging     |           9.00 |
+| corp-vpn-gw-01    | Production  |           9.10 |
+| dev-ml-worker-01  | Development |           5.30 |
++-------------------+-------------+----------------+
++----------+--------------------+-------------+-------------+-------+-----------------+-----------+--------------+
+| asset_id | hostname           | environment | criticality | depth | via             | path      | open_tickets |
++----------+--------------------+-------------+-------------+-------+-----------------+-----------+--------------+
+|        3 | prod-pay-db-01     | Production  | Critical    |     0 | ORIGIN          | 3         |            2 |
+|        6 | prod-ledger-svc-01 | Production  | Critical    |     1 | READS_DATA_FROM | 3,6       |            1 |
+|        1 | prod-pay-gw-01     | Production  | Critical    |     1 | READS_DATA_FROM | 3,1       |            2 |
+|        5 | prod-data-lake-01  | Production  | High        |     1 | READS_DATA_FROM | 3,5       |            1 |
+|        4 | prod-web-edge-01   | Production  | High        |     2 | CALLS           | 3,1,4     |            2 |
+|       10 | dev-ml-worker-01   | Development | Low         |     2 | READS_DATA_FROM | 3,5,10    |            1 |
+|       11 | dev-sandbox-01     | Development | Low         |     3 | CALLS           | 3,5,10,11 |            1 |
++----------+--------------------+-------------+-------------+-------+-----------------+-----------+--------------+
++------------+-----------+---------------+
+| day        | weekday   | deadlines_due |
++------------+-----------+---------------+
+| 2026-10-25 | Sunday    |             0 |
+| 2026-10-26 | Monday    |             1 |
+| 2026-10-27 | Tuesday   |             2 |
+| 2026-10-28 | Wednesday |             0 |
+| 2026-10-29 | Thursday  |             1 |
+| 2026-10-30 | Friday    |             1 |
+| 2026-10-31 | Saturday  |             1 |
++------------+-----------+---------------+
++----------------------+--------------+----------+------------+------------------+-----------+
+| department           | open_tickets | avg_cvss | total_risk | breached_tickets | risk_rank |
++----------------------+--------------+----------+------------+------------------+-----------+
+| Core Payments        |            6 |     8.77 |     100.70 |                2 |         1 |
+| Cloud Infrastructure |            3 |     6.50 |      27.48 |                0 |         2 |
+| Data Platform        |            2 |     7.55 |      20.00 |                0 |         3 |
+| Customer Identity    |            1 |     9.80 |      19.60 |                0 |         4 |
+| Corporate IT         |            2 |     6.40 |      17.35 |                0 |         5 |
+| AppSec               |            0 |     0.00 |       0.00 |                0 |         6 |
+| Security Governance  |            0 |     0.00 |       0.00 |                0 |         6 |
+| Threat Intel         |            0 |     0.00 |       0.00 |                0 |         6 |
++----------------------+--------------+----------+------------+------------------+-----------+
++-------------+------------------+--------------+------------+----------+
+| environment | hostname         | active_vulns | worst_cvss | env_rank |
++-------------+------------------+--------------+------------+----------+
+| Production  | prod-pay-gw-01   |            2 |        9.8 |        1 |
+| Production  | prod-pay-db-01   |            2 |        9.4 |        2 |
+| Staging     | stg-checkout-db  |            1 |        9.0 |        1 |
+| Staging     | stg-web-edge-01  |            1 |        5.9 |        2 |
+| Development | dev-ml-worker-01 |            1 |        5.3 |        1 |
+| Development | dev-sandbox-01   |            1 |        3.7 |        2 |
++-------------+------------------+--------------+------------+----------+
++----------+---------+
+| health   | tickets |
++----------+---------+
+| Breached |       2 |
+| Due soon |       3 |
+| On track |       9 |
+| Resolved |       2 |
++----------+---------+
++------------------+--------------+---------+
+| environment      | status       | tickets |
++------------------+--------------+---------+
+| Development      | IN_PROGRESS  |       1 |
+| Development      | OPEN         |       1 |
+| Development      | ALL STATUSES |       2 |
+| Production       | ESCALATED    |       1 |
+| Production       | IN_PROGRESS  |       3 |
+| Production       | OPEN         |       6 |
+| Production       | RESOLVED     |       1 |
+| Production       | ALL STATUSES |      11 |
+| Staging          | ESCALATED    |       1 |
+| Staging          | OPEN         |       1 |
+| Staging          | RESOLVED     |       1 |
+| Staging          | ALL STATUSES |       3 |
+| ALL ENVIRONMENTS | ALL STATUSES |      16 |
++------------------+--------------+---------+
++---------------+-----------------------------------------------------------------------+--------------------+
+| cve_id        | title                                                                 | relevance          |
++---------------+-----------------------------------------------------------------------+--------------------+
+| CVE-2026-1002 | Hollow ORM metadata call permits SQL injection through column aliases | 1.0844987630844116 |
+| CVE-2026-1013 | Lantern diagnostics endpoint OS command injection                     | 1.0844987630844116 |
++---------------+-----------------------------------------------------------------------+--------------------+
++-------------------------+-----------------+------------------------------------------------------------------------+
+| happened_at             | event           | detail                                                                 |
++-------------------------+-----------------+------------------------------------------------------------------------+
+| 2026-10-25 11:03:34.495 | TICKET_CREATED  | Ticket opened for CVE-2026-1020 with SLA deadline 2026-11-24 11:03:34. |
+| 2026-10-25 11:03:34.497 | STATUS_CHANGED  | Status OPEN -> IN_PROGRESS.                                            |
+| 2026-10-25 11:03:34.497 | PATCH_SUBMITTED | Remediation commit 0badc0de99 attached.                                |
+| 2026-10-25 11:03:34.498 | REVIEW_REJECTED | Patch only covers one redirect parameter                               |
+| 2026-10-25 11:03:34.499 | PATCH_REJECTED  | Commit 0badc0de99 rejected: Patch only covers one redirect parameter   |
+| 2026-10-25 11:03:34.501 | PATCH_SUBMITTED | Remediation commit 1337c0ffee attached.                                |
++-------------------------+-----------------+------------------------------------------------------------------------+
++--------------+--------------+-------------------+------------------+---------------+
+| total_assets | open_tickets | escalated_tickets | resolved_tickets | avg_open_risk |
++--------------+--------------+-------------------+------------------+---------------+
+|            4 |            6 |                 2 |                0 |         16.78 |
++--------------+--------------+-------------------+------------------+---------------+
++-----------+----------+--------------------+-------------+-------------+----------+-------------+---------------+---------------+-----------------------------------------------------------------------+------------+----------+-------------+---------------------+--------------+--------------+------------+---------------------+--------------+-------------------------+-------------+---------------------+
+| ticket_id | asset_id | hostname           | environment | criticality | owner_id | owner_name  | department    | cve_id        | cve_title                                                             | cvss_score | severity | status      | sla_deadline        | sla_breached | hours_to_sla | risk_index | assigned_analyst_id | analyst_name | remediation_commit_hash | resolved_at | created_at          |
++-----------+----------+--------------------+-------------+-------------+----------+-------------+---------------+---------------+-----------------------------------------------------------------------+------------+----------+-------------+---------------------+--------------+--------------+------------+---------------------+--------------+-------------------------+-------------+---------------------+
+|         1 |        1 | prod-pay-gw-01     | Production  | Critical    |        6 | Sneha Patel | Core Payments | CVE-2026-1001 | Meridian SSH daemon pre-auth double free allows remote code execution |        9.8 | Critical | ESCALATED   | 2026-10-23 11:03:34 |            1 |          -48 |      19.60 |                   2 | Arjun Mehta  | NULL                    | NULL        | 2026-10-25 11:03:34 |
+|        10 |        7 | stg-checkout-db    | Staging     | High        |        6 | Sneha Patel | Core Payments | CVE-2026-1013 | Lantern diagnostics endpoint OS command injection                     |        9.0 | Critical | ESCALATED   | 2026-10-24 11:03:34 |            1 |          -24 |      13.50 |                   4 | Meera Iyer   | NULL                    | NULL        | 2026-10-25 11:03:34 |
+|         5 |        3 | prod-pay-db-01     | Production  | Critical    |        6 | Sneha Patel | Core Payments | CVE-2026-1011 | Halcyon SSO broker authentication bypass via forged session token     |        9.4 | Critical | OPEN        | 2026-10-26 11:03:34 |            0 |           23 |      18.80 |                   4 | Meera Iyer   | NULL                    | NULL        | 2026-10-25 11:03:34 |
+|         4 |        3 | prod-pay-db-01     | Production  | Critical    |        6 | Sneha Patel | Core Payments | CVE-2026-1002 | Hollow ORM metadata call permits SQL injection through column aliases |        8.8 | High     | OPEN        | 2026-10-31 11:03:34 |            0 |          143 |      17.60 |                   3 | Priya Nair   | NULL                    | NULL        | 2026-10-25 11:03:34 |
+|         9 |        6 | prod-ledger-svc-01 | Production  | Critical    |        6 | Sneha Patel | Core Payments | CVE-2026-1016 | Ledgerline settlement service race condition allows double payout     |        6.8 | Medium   | OPEN        | 2026-11-02 11:03:34 |            0 |          191 |      13.60 |                   2 | Arjun Mehta  | NULL                    | NULL        | 2026-10-25 11:03:34 |
+|         2 |        1 | prod-pay-gw-01     | Production  | Critical    |        6 | Sneha Patel | Core Payments | CVE-2026-1002 | Hollow ORM metadata call permits SQL injection through column aliases |        8.8 | High     | IN_PROGRESS | 2026-10-30 11:03:34 |            0 |          119 |      17.60 |                   3 | Priya Nair   | a1b2c3d4e5f6            | NULL        | 2026-10-25 11:03:34 |
++-----------+----------+--------------------+-------------+-------------+----------+-------------+---------------+---------------+-----------------------------------------------------------------------+------------+----------+-------------+---------------------+--------------+--------------+------------+---------------------+--------------+-------------------------+-------------+---------------------+
